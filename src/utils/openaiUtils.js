@@ -1,65 +1,57 @@
-const { Configuration, OpenAIApi } = require("openai");
+const OpenAI = require("openai").default;
 const { OPENAI_API_KEY } = require("../config");
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
-/**
- * This function prompts OpenAI to return a strict JSON array of objects,
- * each representing a token (word/punctuation) from the user’s text.
- * Example structure for each token:
- *   {
- *     "token": "Hello",
- *     "isCorrect": true,
- *     "suggestion": "Hello" // or optional if isCorrect = true
- *   }
- */
-async function getTokenAnalysis(userText) {
+async function getIncorrectWords(userText) {
   const systemMessage = {
     role: "system",
-    content: "You are a grammar correction engine. You will split the user text into tokens and indicate which tokens are incorrect. Always return valid JSON only, no extra commentary.",
+    content: "You are a grammar checker that returns only incorrect words as strict JSON.",
   };
 
-  // We use a single user message for the prompt:
   const userMessage = {
     role: "user",
     content: `
-Please analyze the following text and split it into tokens (words, punctuation). 
-For each token, return JSON in the format:
-[
-  {
-    "token": "...",
-    "isCorrect": true/false,
-    "suggestion": "...some corrected form..."
-  },
-  ...
-]
+Check the spelling/grammar of this text and return only a JSON array 
+of objects with the shape: { "original": "X", "suggestion": "Y" }
+for each incorrect word. Exclude correct words. 
+Do not include indexes. 
+Do not return extra text—only the JSON array.
 
-Only return valid JSON. The array's length should match the number of tokens from the user text. 
-If a token is correct, "isCorrect" = true and "suggestion" can be the same as "token".
-If a token is incorrect or misspelled, "isCorrect" = false and "suggestion" should contain the corrected token. 
-User text to analyze: """${userText}"""
-    `,
+Text to check:
+"${userText}"
+`,
   };
 
-  const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: [systemMessage, userMessage],
-    temperature: 0, // keep it deterministic
-  });
-
-  // Attempt to parse the JSON in the response
-  let tokens = [];
   try {
-    tokens = JSON.parse(response.data.choices[0].message.content);
-  } catch (err) {
-    // fallback in case of malformed response
-    console.error("Error parsing OpenAI JSON:", err);
-    tokens = [];
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [systemMessage, userMessage],
+      temperature: 0,
+    });
+
+    const content = response.choices[0]?.message?.content || "";
+
+    let incorrectWords = [];
+    try {
+      incorrectWords = JSON.parse(content);
+      if (!Array.isArray(incorrectWords)) {
+        throw new Error("GPT did not return an array");
+      }
+    } catch (parseErr) {
+      console.error("Error parsing GPT output as JSON:", parseErr);
+      incorrectWords = [];
+    }
+
+    return incorrectWords;
+  } catch (error) {
+    console.error("OpenAI API Error:", error);
+    return [];
   }
-  return tokens;
 }
 
-module.exports = { getTokenAnalysis };
+module.exports = {
+  getIncorrectWords,
+};

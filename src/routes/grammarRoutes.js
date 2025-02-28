@@ -3,6 +3,7 @@ const router = express.Router();
 const grammarController = require("../controllers/grammarController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
-router.post("/check", authMiddleware, grammarController.checkGrammar);
+// POST /api/grammar/check
+router.post("/check", authMiddleware, grammarController.checkGrammarController);
 
 module.exports = router;

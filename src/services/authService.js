@@ -1,27 +1,27 @@
-const authService = require("../services/authService");
+const { signToken } = require("../utils/tokenUtils");
 
-exports.login = async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const result = await authService.login(username, password);
-
-    if (!result.success) {
-      return res.status(401).json(result);
-    }
-    return res.json(result);
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: { message: error.message },
-    });
-  }
+// Dummy user for demonstration:
+const DUMMY_USER = {
+  username: "admin",
+  password: "1234",
 };
 
-exports.logout = (req, res) => {
-  // For simple JWT-based auth, the front-end can just remove the token from storage.
-  // Optionally you could blacklist the token here, but minimal approach:
-  return res.json({
-    success: true,
-    data: { message: "Logged out successfully" },
-  });
+async function login(username, password) {
+  if (username === DUMMY_USER.username && password === DUMMY_USER.password) {
+    const token = signToken({ username });
+    return {
+      success: true,
+      data: { token },
+      error: null,
+    };
+  }
+  return {
+    success: false,
+    data: null,
+    error: { message: "Invalid credentials" },
+  };
+}
+
+module.exports = {
+  login,
 };

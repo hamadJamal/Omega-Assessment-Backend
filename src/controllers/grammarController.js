@@ -1,6 +1,6 @@
 const grammarService = require("../services/grammarService");
 
-exports.checkGrammar = async (req, res) => {
+async function checkGrammarController(req, res) {
   try {
     const { text } = req.body;
     const result = await grammarService.checkGrammar(text);
@@ -11,4 +11,8 @@ exports.checkGrammar = async (req, res) => {
       error: { message: error.message },
     });
   }
+}
+
+module.exports = {
+  checkGrammarController,
 };
