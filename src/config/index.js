@@ -2,6 +2,6 @@ require("dotenv").config();
 
 module.exports = {
   PORT: process.env.PORT || 4000,
-  JWT_SECRET: process.env.JWT_SECRET || "yoursecretkey",
+  JWT_SECRET: process.env.JWT_SECRET || "secret",
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
 };

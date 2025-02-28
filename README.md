@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is the **Node.js + Express** backend for a minimal grammar-correction app.  
+This is the **Node.js + Express** backend for the minimal grammar-correction app.  
 It provides:
 
 1. **User Authentication** (login, logout) via JWT.

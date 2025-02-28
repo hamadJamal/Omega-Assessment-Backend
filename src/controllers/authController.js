@@ -18,8 +18,6 @@ async function login(req, res) {
 }
 
 function logout(req, res) {
-  // For JWT, logout is typically handled on the client by removing the token.
-  // We'll just return success:
   return res.json({
     success: true,
     data: { message: "Logged out successfully" },

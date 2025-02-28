@@ -8,13 +8,13 @@ const openai = new OpenAI({
 async function getIncorrectWords(userText) {
   const systemMessage = {
     role: "system",
-    content: "You are a grammar checker that returns only incorrect words as strict JSON.",
+    content: "You are a spelling checker that returns only incorrect words as strict JSON.",
   };
 
   const userMessage = {
     role: "user",
     content: `
-Check the spelling/grammar of this text and return only a JSON array 
+Check the spelling of this text and return only a JSON array 
 of objects with the shape: { "original": "X", "suggestion": "Y" }
 for each incorrect word. Exclude correct words. 
 Do not include indexes. 

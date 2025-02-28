@@ -1,6 +1,5 @@
 const { signToken } = require("../utils/tokenUtils");
 
-// Dummy user for demonstration:
 const DUMMY_USER = {
   username: "admin",
   password: "1234",
