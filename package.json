@@ -1,0 +1,11 @@
+{
+  "name": "omega-assessment-backend",
+  "version": "1.0.0",
+  "description": "The backend of omega grammar check assessment.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Muhammad Hamad",
+  "license": "ISC"
+}
